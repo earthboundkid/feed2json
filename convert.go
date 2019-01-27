@@ -2,13 +2,16 @@
 package feed2json
 
 import (
+	"bytes"
+	"encoding/json"
+
 	"github.com/gorilla/feeds"
 	"github.com/mmcdole/gofeed"
 )
 
-// Convert converts a gofeed.Feed (used by the parser) into a
+// ConvertObject converts a gofeed.Feed (used by the parser) into a
 // gorilla/feeds.JSONFeed (used by the JSONFeed emitter).
-func Convert(feed *gofeed.Feed) *feeds.JSONFeed {
+func ConvertObject(feed *gofeed.Feed) *feeds.JSONFeed {
 	if feed == nil {
 		return nil
 	}
@@ -64,4 +67,16 @@ func Convert(feed *gofeed.Feed) *feeds.JSONFeed {
 		output.Items[i] = jsonItem
 	}
 	return &output
+}
+
+func Convert(from, to *bytes.Buffer) (err error) {
+	p := gofeed.NewParser()
+	xmlfeed, err := p.Parse(from)
+	if err != nil {
+		return err
+	}
+	jsonfeed := ConvertObject(xmlfeed)
+	enc := json.NewEncoder(to)
+	err = enc.Encode(jsonfeed)
+	return
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>JSON Feed</title>
+    <link>https://jsonfeed.org/</link>
+    <description>JSON Feed is a pragmatic syndication format for blogs, microblogs, and other time-based content.</description>
+		<language>en</language>
+	
+    <item>
+      <title>Announcing JSON Feed</title>
+      <link>https://jsonfeed.org/2017/05/17/announcing_json_feed</link>
+      <guid>https://jsonfeed.org/2017/05/17/announcing_json_feed</guid>
+      <pubDate>Wed, 17 May 2017 08:02:12 -0700</pubDate>
+      <description>&lt;p&gt;We — Manton Reece and Brent Simmons — have noticed that JSON has become the developers’ choice for APIs, and that developers will often go out of their way to avoid XML. JSON is simpler to read and write, and it’s less prone to bugs.&lt;/p&gt;
+
+&lt;p&gt;So we developed JSON Feed, a format similar to &lt;a href=&quot;http://cyber.harvard.edu/rss/rss.html&quot;&gt;RSS&lt;/a&gt; and &lt;a href=&quot;https://tools.ietf.org/html/rfc4287&quot;&gt;Atom&lt;/a&gt; but in JSON. It reflects the lessons learned from our years of work reading and publishing feeds.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://jsonfeed.org/version/1&quot;&gt;See the spec&lt;/a&gt;. It’s at version 1, which may be the only version ever needed. If future versions are needed, version 1 feeds will still be valid feeds.&lt;/p&gt;
+
+&lt;h4&gt;Notes&lt;/h4&gt;
+
+&lt;p&gt;We have a &lt;a href=&quot;https://github.com/manton/jsonfeed-wp&quot;&gt;WordPress plugin&lt;/a&gt; and, coming soon, a JSON Feed Parser for Swift. As more code is written, by us and others, we’ll update the &lt;a href=&quot;https://jsonfeed.org/code&quot;&gt;code&lt;/a&gt; page.&lt;/p&gt;
+
+&lt;p&gt;See &lt;a href=&quot;https://jsonfeed.org/mappingrssandatom&quot;&gt;Mapping RSS and Atom to JSON Feed&lt;/a&gt; for more on the similarities between the formats.&lt;/p&gt;
+
+&lt;p&gt;This website — the Markdown files and supporting resources — &lt;a href=&quot;https://github.com/brentsimmons/JSONFeed&quot;&gt;is up on GitHub&lt;/a&gt;, and you’re welcome to comment there.&lt;/p&gt;
+
+&lt;p&gt;This website is also a blog, and you can subscribe to the &lt;a href=&quot;https://jsonfeed.org/xml/rss.xml&quot;&gt;RSS feed&lt;/a&gt; or the &lt;a href=&quot;https://jsonfeed.org/feed.json&quot;&gt;JSON feed&lt;/a&gt; (if your reader supports it).&lt;/p&gt;
+
+&lt;p&gt;We worked with a number of people on this over the course of several months. We list them, and thank them, at the bottom of the &lt;a href=&quot;https://jsonfeed.org/version/1&quot;&gt;spec&lt;/a&gt;. But — most importantly — &lt;a href=&quot;http://furbo.org/&quot;&gt;Craig Hockenberry&lt;/a&gt; spent a little time making it look pretty. :)&lt;/p&gt;</description>
+    </item>
+
+
+    
+  </channel>
+</rss>
