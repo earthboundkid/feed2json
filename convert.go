@@ -4,10 +4,14 @@ package feed2json
 import (
 	"bytes"
 	"encoding/json"
+	"regexp"
 
 	"github.com/gorilla/feeds"
 	"github.com/mmcdole/gofeed"
 )
+
+// Detects if <tag> or &code; is in text to guess if it's HTML
+var htmlishRe = regexp.MustCompile(`<\w.*?>|&\w+;`)
 
 // ConvertObject converts a gofeed.Feed (used by the parser) into a
 // gorilla/feeds.JSONFeed (used by the JSONFeed emitter).
@@ -40,12 +44,21 @@ func ConvertObject(feed *gofeed.Feed) *feeds.JSONFeed {
 			Id:            item.GUID,
 			Url:           item.Link,
 			Title:         item.Title,
-			ContentHTML:   item.Content,
-			Summary:       item.Description,
 			PublishedDate: item.PublishedParsed,
 			ModifiedDate:  item.UpdatedParsed,
 			Tags:          item.Categories,
 		}
+		if item.Content == "" {
+			if htmlishRe.MatchString(item.Description) {
+				jsonItem.ContentHTML = item.Description
+			} else {
+				jsonItem.ContentText = item.Description
+			}
+		} else {
+			jsonItem.ContentHTML = item.Content
+			jsonItem.Summary = item.Description
+		}
+
 		if item.Image != nil {
 			jsonItem.Image = item.Image.URL
 		}
