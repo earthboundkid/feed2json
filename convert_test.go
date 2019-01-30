@@ -3,6 +3,7 @@ package feed2json_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -45,17 +46,23 @@ func equalJSON(t *testing.T, expect, have []byte) {
 }
 
 func TestConvert(t *testing.T) {
-	inputFile := "testdata/rss.xml"
-	outputFile := "testdata/feed.json"
+	for _, name := range []string{
+		"jsonfeed-org",
+	} {
+		t.Run(name, func(t *testing.T) {
+			xmlName := fmt.Sprintf("testdata/%s.xml", name)
+			jsonName := fmt.Sprintf("testdata/%s.json", name)
 
-	rssBuf := bytes.NewBuffer(readFile(t, inputFile))
-	var jsonBuf bytes.Buffer
+			rssBuf := bytes.NewBuffer(readFile(t, xmlName))
+			var jsonBuf bytes.Buffer
 
-	if err := feed2json.Convert(rssBuf, &jsonBuf); err != nil {
-		t.Fatalf("unexpected error converting %q testing: %v ",
-			inputFile, err)
+			if err := feed2json.Convert(rssBuf, &jsonBuf); err != nil {
+				t.Fatalf("unexpected error converting %q testing: %v ",
+					xmlName, err)
+			}
+
+			output := readFile(t, jsonName)
+			equalJSON(t, output, jsonBuf.Bytes())
+		})
 	}
-
-	output := readFile(t, outputFile)
-	equalJSON(t, output, jsonBuf.Bytes())
 }
