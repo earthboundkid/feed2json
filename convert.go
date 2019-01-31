@@ -82,6 +82,8 @@ func ConvertObject(feed *gofeed.Feed) *feeds.JSONFeed {
 	return &output
 }
 
+// Convert takes an XML feed from one buffer and turns it into a JSON feed
+// in the other buffer.
 func Convert(from, to *bytes.Buffer) (err error) {
 	p := gofeed.NewParser()
 	xmlfeed, err := p.Parse(from)
