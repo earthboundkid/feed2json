@@ -92,6 +92,7 @@ func Convert(from, to *bytes.Buffer) (err error) {
 	}
 	jsonfeed := ConvertObject(xmlfeed)
 	enc := json.NewEncoder(to)
+	enc.SetEscapeHTML(false)
 	err = enc.Encode(jsonfeed)
 	return
 }
