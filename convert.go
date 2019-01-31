@@ -28,7 +28,7 @@ func ConvertObject(feed *gofeed.Feed) *feeds.JSONFeed {
 	}
 	if feed.Author != nil {
 		output.Author = &feeds.JSONAuthor{
-			Name: output.Author.Name,
+			Name: feed.Author.Name,
 		}
 	}
 	if feed.Image != nil {
