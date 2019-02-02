@@ -10,6 +10,7 @@ import (
 
 	"github.com/carlmjohnson/errors"
 	"github.com/carlmjohnson/feed2json"
+	"github.com/carlmjohnson/flagext"
 	"github.com/pseidemann/finish"
 )
 
@@ -25,7 +26,8 @@ func webCLI(args []string) error {
 	addr := fl.String("address", ":8080", "listen on `host:port`")
 	path := fl.String("path", "/", "serve requests on this path")
 	param := fl.String("param", "url", "expect URL in this query param")
-	host := fl.String("host", "", "require URLs to be on this host")
+	var hosts flagext.Strings
+	fl.Var(&hosts, "host", "require requested URLs to be on host (pass multiple times for more hosts)")
 
 	fl.Usage = func() {
 		fmt.Fprintf(fl.Output(),
@@ -44,7 +46,7 @@ Options:
 
 	http.Handle(*path, feed2json.Handler(
 		feed2json.ExtractURLFromParam(*param),
-		feed2json.ValidateHost(*host),
+		feed2json.ValidateHost(hosts...),
 		nil,
 		nil,
 		func(next http.Handler) http.Handler {

@@ -19,12 +19,22 @@ func ExtractURLFromParam(name string) URLExtractor {
 
 type URLValidator = func(*url.URL) bool
 
-func ValidateHost(name string) URLValidator {
+func ValidateHost(names ...string) URLValidator {
+	if len(names) == 0 {
+		return func(u *url.URL) bool {
+			return true
+		}
+	}
+	m := map[string]struct{}{}
+	for _, name := range names {
+		m[name] = struct{}{}
+	}
 	return func(u *url.URL) bool {
 		if u == nil {
 			return false
 		}
-		return u.Host == name || name == ""
+		_, ok := m[u.Host]
+		return ok
 	}
 }
 
