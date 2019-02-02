@@ -24,7 +24,7 @@ func ValidateHost(name string) URLValidator {
 		if u == nil {
 			return false
 		}
-		return u.Host == name
+		return u.Host == name || name == ""
 	}
 }
 
