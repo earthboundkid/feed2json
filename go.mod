@@ -1,5 +1,7 @@
 module github.com/carlmjohnson/feed2json
 
+// +heroku install ./cmd/...
+
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
 	github.com/carlmjohnson/errors v0.0.6
