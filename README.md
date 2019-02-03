@@ -2,6 +2,8 @@
 
 Given an Atom or RSS feed, creates a comparable JSON feed.
 
+See [demo webapp on Heroku](https://feed2json.herokuapp.com/?url=https://jsonfeed.org/xml/rss.xml).
+
 ## Installation
 
 First install [Go](http://golang.org).
@@ -43,4 +45,37 @@ $ feed2json -src 'https://jsonfeed.org/xml/rss.xml' | json-tidy
     "title": "JSON Feed",
     "version": "https://jsonfeed.org/version/1"
 }
+
+$ feed2jsonweb -h
+feed2jsonweb is an HTTP server that converts Atom and RSS feeds to JSON feeds
+
+Usage:
+
+    feed2jsonweb [opts]
+
+
+Options:
+
+  -allow-host host
+        require requested URLs to be on host
+  -cors-origin value
+        allow these CORS origins (default *)
+  -host name
+        host name to listen for (default "127.0.0.1")
+  -max-age duration
+        set Cache-Control: public, max-age header (default 5m0s)
+  -param string
+        expect URL in this query param (default "url")
+  -port number
+        port number to listen on (default "8080")
+  -read-timeout duration
+        timeout for reading request headers (default 1s)
+  -request-timeout duration
+        timeout for fetching XML (default 1s)
+  -url-path string
+        serve requests on this path (default "/")
+  -write-timeout duration
+        timeout for writing response (default 2s)
+
+Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins. Options can also be passed as environmental variables (CAPITALIZED_WITH_UNDERSCORES).
 ```
