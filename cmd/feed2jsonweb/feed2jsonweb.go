@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -20,35 +21,56 @@ func main() {
 }
 
 func webCLI(args []string) error {
-	fl := flag.NewFlagSet("feed2jsonweb", flag.ContinueOnError)
-	readTimeout := fl.Duration("read-timeout", 1*time.Second, "timeout for reading request headers")
-	writeTimeout := fl.Duration("write-timeout", 1*time.Second, "timeout for writing response")
+	var (
+		addr         string
+		path         string
+		param        string
+		readTimeout  time.Duration
+		writeTimeout time.Duration
+		hosts        flagext.Strings
+		corsOrigins  = flagext.Strings{"*"}
+	)
+	{
+		fl := flag.NewFlagSet("feed2jsonweb", flag.ContinueOnError)
+		fl.DurationVar(&readTimeout, "read-timeout", 1*time.Second, "timeout for reading request headers")
+		fl.DurationVar(&writeTimeout, "write-timeout", 2*time.Second, "timeout for writing response")
+		fl.DurationVar(&http.DefaultClient.Timeout, "request-timeout", 1*time.Second, "timeout for fetching XML")
+		port := fl.String("port", "8080", "port `number` to listen on")
+		host := fl.String("host", "127.0.0.1", "host `name` to listen for")
+		fl.StringVar(&path, "path", "/", "serve requests on this path")
+		fl.StringVar(&param, "param", "url", "expect URL in this query param")
+		fl.Var(&hosts, "allow-host", "require requested URLs to be on `host`")
+		fl.Var(&corsOrigins, "cors-origin", "allow these CORS origins")
 
-	addr := fl.String("address", ":8080", "listen on `host:port`")
-	path := fl.String("path", "/", "serve requests on this path")
-	param := fl.String("param", "url", "expect URL in this query param")
-	var hosts flagext.Strings
-	fl.Var(&hosts, "host", "require requested URLs to be on host (pass multiple times for more hosts)")
-	var corsOrigins flagext.Strings
-	fl.Var(&corsOrigins, "cors-origins", "allow these CORS origins")
+		fl.Usage = func() {
+			fmt.Fprintf(fl.Output(),
+				`feed2jsonweb is an HTTP server that converts Atom and RSS feeds to JSON feeds
 
-	fl.Usage = func() {
-		fmt.Fprintf(fl.Output(),
-			`feed2jsonweb serve
+Usage:
 
-	feed2jsonweb [opts]
+    feed2jsonweb [opts]
+
 
 Options:
+
 `)
-		fl.PrintDefaults()
+			fl.PrintDefaults()
+			fmt.Fprintf(fl.Output(),
+				`
+Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins.
+`,
+			)
+
+		}
+
+		if err := fl.Parse(args); err != nil {
+			return flag.ErrHelp
+		}
+		addr = net.JoinHostPort(*host, *port)
 	}
 
-	if err := fl.Parse(args); err != nil {
-		return flag.ErrHelp
-	}
-
-	http.Handle(*path, feed2json.Handler(
-		feed2json.ExtractURLFromParam(*param),
+	http.Handle(path, feed2json.Handler(
+		feed2json.ExtractURLFromParam(param),
 		feed2json.ValidateHost(hosts...),
 		nil,
 		nil,
@@ -61,7 +83,7 @@ Options:
 		},
 		func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != *path {
+				if r.URL.Path != path {
 					log.Printf("[%d] Not found %q", http.StatusNotFound, r.URL)
 					http.Error(w, "Not Found", http.StatusNotFound)
 					return
@@ -75,9 +97,9 @@ Options:
 	))
 
 	srv := http.Server{
-		Addr:              *addr,
-		ReadHeaderTimeout: *readTimeout,
-		WriteTimeout:      *writeTimeout,
+		Addr:              addr,
+		ReadHeaderTimeout: readTimeout,
+		WriteTimeout:      writeTimeout,
 	}
 
 	fin := finish.New()
