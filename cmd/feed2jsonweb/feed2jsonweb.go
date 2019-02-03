@@ -27,6 +27,7 @@ func webCLI(args []string) error {
 		param        string
 		readTimeout  time.Duration
 		writeTimeout time.Duration
+		maxAge       time.Duration
 		hosts        flagext.Strings
 		corsOrigins  = flagext.Strings{"*"}
 	)
@@ -35,6 +36,7 @@ func webCLI(args []string) error {
 		fl.DurationVar(&readTimeout, "read-timeout", 1*time.Second, "timeout for reading request headers")
 		fl.DurationVar(&writeTimeout, "write-timeout", 2*time.Second, "timeout for writing response")
 		fl.DurationVar(&http.DefaultClient.Timeout, "request-timeout", 1*time.Second, "timeout for fetching XML")
+		fl.DurationVar(&maxAge, "max-age", 5*time.Minute, "set Cache-Control: public, max-age header")
 		port := fl.String("port", "8080", "port `number` to listen on")
 		host := fl.String("host", "127.0.0.1", "host `name` to listen for")
 		fl.StringVar(&path, "path", "/", "serve requests on this path")
@@ -79,6 +81,19 @@ Note: -allow-host and -cors-origin can be passed multiple times to set more host
 				start := time.Now()
 				next.ServeHTTP(w, r)
 				log.Printf("%s for %q in %v", r.URL, r.UserAgent(), time.Since(start))
+			})
+		},
+		func(next http.Handler) http.Handler {
+			if maxAge == 0 {
+				return next
+			}
+
+			seconds := float64(maxAge) / float64(time.Second)
+			header := fmt.Sprintf("public, max-age=%.0f", seconds)
+
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Cache-Control", header)
+				next.ServeHTTP(w, r)
 			})
 		},
 		func(next http.Handler) http.Handler {
