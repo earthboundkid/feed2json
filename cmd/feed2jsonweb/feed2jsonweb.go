@@ -13,6 +13,7 @@ import (
 	"github.com/carlmjohnson/feed2json"
 	"github.com/carlmjohnson/flagext"
 	"github.com/go-chi/cors"
+	"github.com/peterbourgon/ff"
 	"github.com/pseidemann/finish"
 )
 
@@ -39,7 +40,7 @@ func webCLI(args []string) error {
 		fl.DurationVar(&maxAge, "max-age", 5*time.Minute, "set Cache-Control: public, max-age header")
 		port := fl.String("port", "8080", "port `number` to listen on")
 		host := fl.String("host", "127.0.0.1", "host `name` to listen for")
-		fl.StringVar(&path, "path", "/", "serve requests on this path")
+		fl.StringVar(&path, "url-path", "/", "serve requests on this path")
 		fl.StringVar(&param, "param", "url", "expect URL in this query param")
 		fl.Var(&hosts, "allow-host", "require requested URLs to be on `host`")
 		fl.Var(&corsOrigins, "cors-origin", "allow these CORS origins")
@@ -59,13 +60,13 @@ Options:
 			fl.PrintDefaults()
 			fmt.Fprintf(fl.Output(),
 				`
-Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins.
+Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins. Options can also be passed as environmental variables (CAPITALIZED_WITH_UNDERSCORES).
 `,
 			)
 
 		}
 
-		if err := fl.Parse(args); err != nil {
+		if err := ff.Parse(fl, args, ff.WithEnvVarNoPrefix()); err != nil {
 			return flag.ErrHelp
 		}
 		addr = net.JoinHostPort(*host, *port)
@@ -121,6 +122,7 @@ Note: -allow-host and -cors-origin can be passed multiple times to set more host
 	fin.Add(&srv)
 
 	go func() {
+		log.Printf("Serving on %s", addr)
 		err := srv.ListenAndServe()
 		if err != http.ErrServerClosed {
 			log.Fatal(err)
