@@ -11,6 +11,7 @@ import (
 	"github.com/carlmjohnson/errors"
 	"github.com/carlmjohnson/feed2json"
 	"github.com/carlmjohnson/flagext"
+	"github.com/go-chi/cors"
 	"github.com/pseidemann/finish"
 )
 
@@ -28,6 +29,8 @@ func webCLI(args []string) error {
 	param := fl.String("param", "url", "expect URL in this query param")
 	var hosts flagext.Strings
 	fl.Var(&hosts, "host", "require requested URLs to be on host (pass multiple times for more hosts)")
+	var corsOrigins flagext.Strings
+	fl.Var(&corsOrigins, "cors-origins", "allow these CORS origins")
 
 	fl.Usage = func() {
 		fmt.Fprintf(fl.Output(),
@@ -66,6 +69,9 @@ Options:
 				next.ServeHTTP(w, r)
 			})
 		},
+		cors.New(cors.Options{
+			AllowedOrigins: corsOrigins,
+		}).Handler,
 	))
 
 	srv := http.Server{
