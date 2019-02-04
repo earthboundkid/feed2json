@@ -13,9 +13,9 @@ import (
 // Detects if <tag> or &code; is in text to guess if it's HTML
 var htmlishRe = regexp.MustCompile(`<\w.*?>|&\w+;`)
 
-// ConvertObject converts a gofeed.Feed (used by the parser) into a
+// convertObject converts a gofeed.Feed (used by the parser) into a
 // gorilla/feeds.JSONFeed (used by the JSONFeed emitter).
-func ConvertObject(feed *gofeed.Feed) *feeds.JSONFeed {
+func convertObject(feed *gofeed.Feed) *feeds.JSONFeed {
 	if feed == nil {
 		return nil
 	}
@@ -90,7 +90,7 @@ func Convert(from, to *bytes.Buffer) (err error) {
 	if err != nil {
 		return err
 	}
-	jsonfeed := ConvertObject(xmlfeed)
+	jsonfeed := convertObject(xmlfeed)
 	enc := json.NewEncoder(to)
 	enc.SetEscapeHTML(false)
 	err = enc.Encode(jsonfeed)
