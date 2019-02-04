@@ -8,8 +8,12 @@ import (
 	"net/url"
 )
 
+// URLExtractor is a user provided callback that determines a URL for an XML feed
+// based on a request
 type URLExtractor = func(*http.Request) *url.URL
 
+// ExtractURLFromParam is a URLExtractor that extracts a URL from the query
+// param specified by name.
 func ExtractURLFromParam(name string) URLExtractor {
 	return func(r *http.Request) *url.URL {
 		u, _ := url.Parse(r.URL.Query().Get(name))
@@ -17,8 +21,12 @@ func ExtractURLFromParam(name string) URLExtractor {
 	}
 }
 
+// URLValidator is a user provided callback that determines whether the URL
+// for an XML feed is valid for Handler.
 type URLValidator = func(*url.URL) bool
 
+// ValidateHost is a URLValidator that approves of URLs where the hostname
+// is in the names list.
 func ValidateHost(names ...string) URLValidator {
 	if len(names) == 0 {
 		return func(u *url.URL) bool {
@@ -38,10 +46,18 @@ func ValidateHost(names ...string) URLValidator {
 	}
 }
 
+// Middleware wraps an http.Handler in a http.Handler.
 type Middleware = func(http.Handler) http.Handler
 
+// Logger is a user provided callback that matches the fmt/log.Printf calling
+// conventions.
 type Logger = func(format string, v ...interface{})
 
+// Handler is an http.Handler that extracts and validates a URL for a request,
+// then requests is with the provided http.Client. Responses from Handler are
+// wrapped by the user provided middleware, if any.
+//
+// c if nil defaults to http.DefaultClient. l if nil defaults to log.Printf.
 func Handler(x URLExtractor, v URLValidator, c *http.Client, l Logger, ms ...Middleware) http.Handler {
 	if c == nil {
 		c = http.DefaultClient
