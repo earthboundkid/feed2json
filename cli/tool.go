@@ -1,4 +1,4 @@
-package feed2json
+package cli
 
 import (
 	"bytes"
@@ -9,10 +9,12 @@ import (
 	"time"
 
 	"github.com/carlmjohnson/errors"
+	"github.com/carlmjohnson/feed2json"
 	"github.com/carlmjohnson/flagext"
 )
 
-func CLI(args []string) (err error) {
+// Tool is the command line tool for cmd/feed2json
+func Tool(args []string) (err error) {
 	fl := flag.NewFlagSet("feed2json", flag.ContinueOnError)
 	src := flagext.FileOrURL(flagext.StdIO, nil)
 	fl.Var(src, "src", "source `file or URL`")
@@ -38,7 +40,7 @@ Options:
 	if _, err = from.ReadFrom(src); err != nil {
 		return err
 	}
-	if err = Convert(&from, &to); err != nil {
+	if err = feed2json.Convert(&from, &to); err != nil {
 		return err
 	}
 	_, err = io.Copy(dst, &to)
