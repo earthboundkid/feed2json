@@ -2,7 +2,7 @@
 
 Given an Atom or RSS feed, creates a comparable JSON feed.
 
-See [demo webapp on Heroku](https://feed2json.herokuapp.com/?url=https://jsonfeed.org/xml/rss.xml).
+See [demo webapp on Heroku](https://feed2json.herokuapp.com/) ([sample conversion](https://feed2json.herokuapp.com/?url=https://jsonfeed.org/xml/rss.xml)).
 
 ## Installation
 
