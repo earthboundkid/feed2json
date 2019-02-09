@@ -55,13 +55,13 @@ Options:
 			fl.PrintDefaults()
 			fmt.Fprintf(fl.Output(),
 				`
-Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins. Options can also be passed as environmental variables (CAPITALIZED_WITH_UNDERSCORES).
+Note: -allow-host and -cors-origin can be passed multiple times to set more hosts and origins. Options can also be passed as environmental variables (CAPITALIZED_WITH_UNDERSCORES) prefixed by FEED2JSON_.
 `,
 			)
 
 		}
 
-		if err := ff.Parse(fl, args, ff.WithEnvVarNoPrefix()); err != nil {
+		if err := ff.Parse(fl, args, ff.WithEnvVarPrefix("FEED2JSON")); err != nil {
 			return flag.ErrHelp
 		}
 		addr = net.JoinHostPort(*host, *port)
