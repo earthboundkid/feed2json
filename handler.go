@@ -17,7 +17,14 @@ type URLExtractor = func(*http.Request) *url.URL
 // param specified by name.
 func ExtractURLFromParam(name string) URLExtractor {
 	return func(r *http.Request) *url.URL {
-		u, _ := url.Parse(r.URL.Query().Get(name))
+		queryVal := r.URL.Query().Get(name)
+		if queryVal == "" {
+			return nil
+		}
+		u, err := url.Parse(queryVal)
+		if err != nil {
+			return nil
+		}
 		return u
 	}
 }
@@ -31,7 +38,7 @@ type URLValidator = func(*url.URL) bool
 func ValidateHost(names ...string) URLValidator {
 	if len(names) == 0 {
 		return func(u *url.URL) bool {
-			return true
+			return u != nil
 		}
 	}
 	m := map[string]struct{}{}
@@ -109,8 +116,8 @@ func Handler(x URLExtractor, v URLValidator, c *http.Client, l Logger, ms ...Mid
 		}))
 
 	ms = append([]Middleware{addFeedURLContext(x, v)}, ms...)
-	for _, m := range ms {
-		h = m(h)
+	for i := range ms {
+		h = ms[len(ms)-1-i](h)
 	}
 	return h
 }
