@@ -3,9 +3,11 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/carlmjohnson/feed2json"
@@ -79,6 +81,7 @@ Note: -allow-host and -cors-origin can be passed multiple times to set more host
 				log.Printf("%s for %q in %v", r.URL, r.UserAgent(), time.Since(start))
 			})
 		},
+		fallbackMiddleware,
 		func(next http.Handler) http.Handler {
 			if maxAge == 0 {
 				return next
@@ -126,4 +129,44 @@ Note: -allow-host and -cors-origin can be passed multiple times to set more host
 
 	fin.Wait()
 	return nil
+}
+
+var fallbackPage = template.Must(template.New("").Parse(`<html>
+	<head>
+		<title>Feed2JSON Web</title>
+	</head>
+	<body>
+		<h1>Feed2JSON Web</h1>
+		<form action="" method="GET">
+			{{ if not .OK | and .URL }}
+				<h2>Invalid URL</h2>
+			{{ end }}
+			<label>
+				XML Feed URL:
+				<input
+					name="url"
+					placeholder="https://jsonfeed.org/xml/rss.xml"
+					{{ with .URL }}value="{{ . }}"{{ end }}
+				/>
+			</label>
+			<button type="submit">Go</button>
+		</form>
+	</body>
+</html>
+`))
+
+func fallbackMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u, ok := feed2json.FeedURLFromContext(r.Context())
+		if ok {
+			next.ServeHTTP(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+		data := struct {
+			URL *url.URL
+			OK  bool
+		}{u, ok}
+		fallbackPage.Execute(w, data)
+	})
 }
