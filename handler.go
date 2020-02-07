@@ -29,6 +29,17 @@ func ExtractURLFromParam(name string) URLExtractor {
 	}
 }
 
+// StaticURLInjector is a URLExtractor that always injects the same URL, the provided string.
+func StaticURLInjector(staticurl string) URLExtractor {
+	return func(r *http.Request) *url.URL {
+		u, err := url.Parse(staticurl)
+		if err != nil {
+			panic(err)
+		}
+		return u
+	}
+}
+
 // URLValidator is a user provided callback that determines whether the URL
 // for an XML feed is valid for Handler.
 type URLValidator = func(*url.URL) bool
