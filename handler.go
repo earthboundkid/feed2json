@@ -86,6 +86,9 @@ func Handler(x URLExtractor, v URLValidator, c *http.Client, l Logger, ms ...Mid
 	if l == nil {
 		l = log.Printf
 	}
+	if v == nil {
+		v = func(*url.URL) bool { return true }
+	}
 	h := http.Handler(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodGet && r.Method != http.MethodHead {
