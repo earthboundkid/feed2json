@@ -1,4 +1,4 @@
-# feed2json [![GoDoc](https://godoc.org/github.com/carlmjohnson/feed2json?status.svg)](https://godoc.org/github.com/carlmjohnson/feed2json) [![Go Report Card](https://goreportcard.com/badge/github.com/carlmjohnson/feed2json)](https://goreportcard.com/report/github.com/carlmjohnson/feed2json)
+# feed2json [![GoDoc](https://godoc.org/github.com/carlmjohnson/feed2json?status.svg)](https://godoc.org/github.com/carlmjohnson/feed2json) [![Go Report Card](https://goreportcard.com/badge/github.com/carlmjohnson/feed2json)](https://goreportcard.com/report/github.com/carlmjohnson/feed2json) [![Calver v0.YY.Minor](https://img.shields.io/badge/calver-v0.YY.Minor-22bfda.svg)](https://calver.org)
 
 Given an Atom or RSS feed, creates a comparable JSON feed.
 
