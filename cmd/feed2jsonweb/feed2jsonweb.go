@@ -3,10 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/carlmjohnson/errors"
+	"github.com/carlmjohnson/exitcode"
 	"github.com/carlmjohnson/feed2json/cli"
 )
 
 func main() {
-	os.Exit(errors.Execute(cli.Web, nil))
+	exitcode.Exit(cli.Web(os.Args[1:]))
 }

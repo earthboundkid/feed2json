@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/carlmjohnson/errors"
+	"github.com/carlmjohnson/errutil"
 	"github.com/carlmjohnson/feed2json"
 	"github.com/carlmjohnson/flagext"
 )
@@ -44,6 +44,6 @@ Options:
 		return err
 	}
 	_, err = io.Copy(dst, &to)
-	defer errors.Defer(&err, dst.Close)
+	defer errutil.Defer(&err, dst.Close)
 	return err
 }
