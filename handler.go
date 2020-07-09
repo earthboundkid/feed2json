@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+
+	"golang.org/x/net/context/ctxhttp"
 )
 
 // URLExtractor is a user provided callback that determines a URL for an XML feed
@@ -102,7 +104,8 @@ func Handler(x URLExtractor, v URLValidator, c *http.Client, l Logger, ms ...Mid
 					"bad url requested: %q", u)
 				return
 			}
-			rsp, err := c.Get(u.String())
+
+			rsp, err := ctxhttp.Get(r.Context(), c, u.String())
 			if err != nil {
 				handleErr(w, l, http.StatusBadGateway,
 					"error connecting to %q: %v", u, err)

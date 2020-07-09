@@ -13,7 +13,7 @@ require (
 	github.com/peterbourgon/ff v1.1.0
 	github.com/pseidemann/finish v0.0.0-20190122212907-385f9851b7c7
 	github.com/stretchr/testify v1.3.0 // indirect
-	golang.org/x/net v0.0.0-20190119204137-ed066c81e75e // indirect
+	golang.org/x/net v0.0.0-20190119204137-ed066c81e75e
 	golang.org/x/text v0.3.0 // indirect
 )
 
